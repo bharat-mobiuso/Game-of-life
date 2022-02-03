@@ -2,11 +2,11 @@ const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 
 const resolution = 20;
-canvas.width = 800;
-canvas.height = 800;
+canvas.width = 1400;
+canvas.height = 700;
 
-const rows = canvas.height / resolution;
-const cols = canvas.width / resolution;
+const rows = Math.floor(canvas.height / resolution);
+const cols = Math.floor(canvas.width / resolution);
 
 let grid = createFirstGen(rows,cols);
 console.log(grid);
@@ -29,19 +29,19 @@ function createFirstGen(rows,cols){
     }
 
     // Populating first Gen with random 1's and 0's 
-    for(let i=0;i<rows;i++){
-        for(let j=0;j<cols;j++){
-            firstGen[i][j] = Math.floor(Math.random() * 2);
-        }
-    }
-
+    firstGen = firstGen.map( (row) => {
+        return row.map( () => {
+            return Math.floor(Math.random() * 2)
+        })
+    })
+    
     return firstGen;
 }
 
 function nextGen(grid){
     const tempGrid =  [...grid].map(row => [...row]);
-    for(let i=0;i<rows;i++){
-        for(let j=0;j<cols;j++){
+    for(let i=0;i<grid.length;i++){
+        for(let j=0;j<grid[i].length;j++){
 
             const currentCell = grid[i][j];
             let countOfNeighbour = 0;
