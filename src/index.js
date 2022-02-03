@@ -1,52 +1,49 @@
-const mycanvas = document.querySelector('canvas');
-const ctx = mycanvas.getContext('2d');
+const canvas = document.querySelector('canvas');
+const ctx = canvas.getContext('2d');
 
 const resolution = 20;
-mycanvas.width = 800;
-mycanvas.height = 800;
+canvas.width = 800;
+canvas.height = 800;
 
-const rows = mycanvas.height / resolution;
-const cols = mycanvas.width / resolution;
+const rows = canvas.height / resolution;
+const cols = canvas.width / resolution;
 
-let canvas = createArray(rows,cols);
-fillArray(canvas);
-console.log(canvas);
-// update(canvas);
+let grid = createFirstGen(rows,cols);
+console.log(grid);
 
 requestAnimationFrame(update);
 
 function update() {
     setTimeout(function(){ //throttle requestAnimationFrame to .5s
-        canvas = nextArray(canvas);
-        render(canvas);
+        grid = nextGen(grid);
+        render(grid);
         requestAnimationFrame(update)
     },500);
 }
 
-function createArray(rows,cols){
-    let newArray = new Array(rows).fill(null);
+function createFirstGen(rows,cols){
+    let firstGen = new Array(rows).fill(null);
 
     for(let i=0;i<rows;i++){
-        newArray[i] = new Array(cols).fill(null);
+        firstGen[i] = new Array(cols).fill(null);
     }
-    return newArray;
-}
 
-function fillArray(canvas){
-    // populating 2D array by random 1's
+    // Populating first Gen with random 1's and 0's 
     for(let i=0;i<rows;i++){
         for(let j=0;j<cols;j++){
-            canvas[i][j] = Math.floor(Math.random() * 2);
+            firstGen[i][j] = Math.floor(Math.random() * 2);
         }
     }
+
+    return firstGen;
 }
 
-function nextArray(canvas){
-    const tempArray =  [...canvas].map(row => [...row]);
+function nextGen(grid){
+    const tempGrid =  [...grid].map(row => [...row]);
     for(let i=0;i<rows;i++){
         for(let j=0;j<cols;j++){
 
-            const currentElement = canvas[i][j];
+            const currentCell = grid[i][j];
             let countOfNeighbour = 0;
             
             for(let innerRow = -1; innerRow < 2;innerRow++){
@@ -58,7 +55,7 @@ function nextArray(canvas){
                         continue;
                     }
                     if(x_point >= 0 && y_point >= 0 && x_point < rows && y_point < cols){
-                        if(canvas[x_point][y_point] === 1){
+                        if(grid[x_point][y_point] === 1){
                             countOfNeighbour += 1;
                         }
                     }
@@ -66,19 +63,19 @@ function nextArray(canvas){
             }
             
             // rules for Conway's game of life
-            if(currentElement && countOfNeighbour < 2){
-                tempArray[i][j] = 0;
-            }else if(currentElement && countOfNeighbour > 3){
-                tempArray[i][j] = 0;
-            }else if(!currentElement && countOfNeighbour === 3){
-                tempArray[i][j] = 1;
-            }else if(currentElement && (countOfNeighbour === 2 || countOfNeighbour === 3)){
-                tempArray[i][j] = 1;
+            if(currentCell && countOfNeighbour < 2){
+                tempGrid[i][j] = 0;
+            }else if(currentCell && countOfNeighbour > 3){
+                tempGrid[i][j] = 0;
+            }else if(!currentCell && countOfNeighbour === 3){
+                tempGrid[i][j] = 1;
+            }else if(currentCell && (countOfNeighbour === 2 || countOfNeighbour === 3)){
+                tempGrid[i][j] = 1;
             }
             
         }
     }
-    return tempArray;
+    return tempGrid;
 }
 
 function render(grid) {
